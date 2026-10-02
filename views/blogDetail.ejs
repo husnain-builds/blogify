@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head.ejs') %>
+    <title><%= blog.title %></title>
+</head>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <% const profileImageUrl = (url) => url && url.startsWith('../public/') ? url.replace('../public', '') : url; %>
+    <% if (blog) { %>
+        <div class="container">
+            <figure class="figure">
+                <img src="<%= blog.coverImageURL %>" class="figure-img img-fluid rounded" alt="..." width="700px"/>
+                <figcaption class="figure-caption"><%= blog.title %></figcaption>
+            </figure>
+            <div class="container">
+                <img src="<%= profileImageUrl(blog.createdBy.profileImageUrl) %>" width="80px"/>
+                <p><%= blog.createdBy.fullName %></p>
+            </div>
+            <p>
+                <%= blog.body %>
+            </p> 
+        </div>
+        <div class="container mt-3">
+            <h4>Comments</h4>
+            <% if (locals.user) { %>
+                <form action="/blog/comment/<%= blog._id %>" method="post">
+                    <label>Comment</label>
+                    <input type="text" name="comment" class="form-control"/>
+                    <button class="btn btn-primary btn-sm mt-2" type="submit">Post</button>
+                </form>
+            <% } %>
+            <% comments.forEach(comment => { %>
+                <img src="<%= profileImageUrl(comment.createdBy.profileImageUrl) %>" width="80px"/>
+                <p><%= comment.createdBy.fullName %></p>
+                <p><%= comment.comment %></p>
+            <% }) %>
+        </div>
+    <% } %>
+    <%- include('./partials/scripts.ejs') %>
+</body>
+</html>
