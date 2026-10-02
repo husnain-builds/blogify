@@ -19,6 +19,14 @@ const checkForAuthenticationCookie = (cookieName) => {
     }
 }
 
+const requireAuthentication = (req, res, next) => {
+    if (!req.user) {
+        return res.redirect('/user/signin');
+    }
+    return next();
+}
+
 module.exports = {
-    checkForAuthenticationCookie
+    checkForAuthenticationCookie,
+    requireAuthentication
 }
