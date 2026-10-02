@@ -2,40 +2,111 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs') %>
-    <title><%= blog.title %></title>
+    <title><%= blog ? `${blog.title} | Blogify` : 'Blog not found | Blogify' %></title>
 </head>
 <body>
     <%- include('./partials/nav.ejs') %>
     <% const profileImageUrl = (url) => url && url.startsWith('../public/') ? url.replace('../public', '') : url; %>
     <% if (blog) { %>
-        <div class="container">
-            <figure class="figure">
-                <img src="<%= blog.coverImageURL %>" class="figure-img img-fluid rounded" alt="..." width="700px"/>
-                <figcaption class="figure-caption"><%= blog.title %></figcaption>
-            </figure>
-            <div class="container">
-                <img src="<%= profileImageUrl(blog.createdBy.profileImageUrl) %>" width="80px"/>
-                <p><%= blog.createdBy.fullName %></p>
+        <main class="container py-4 py-lg-5">
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb small">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Story</li>
+                </ol>
+            </nav>
+
+            <div class="row justify-content-center">
+                <article class="col-lg-10 col-xl-9">
+                <header class="mb-4 mb-lg-5">
+                    <p class="text-uppercase text-primary fw-semibold small mb-2">Blogify story</p>
+                    <h1 class="display-5 fw-bold mb-4"><%= blog.title %></h1>
+                    <div class="d-flex align-items-center gap-3 border-top border-bottom py-3">
+                        <% if (blog.createdBy) { %>
+                            <img class="rounded-circle object-fit-cover" src="<%= profileImageUrl(blog.createdBy.profileImageUrl) || '/images/user-avatar.png' %>" width="48" height="48" alt="">
+                            <div>
+                                <p class="fw-semibold mb-0"><%= blog.createdBy.fullName || 'Blogify member' %></p>
+                                <p class="small text-body-secondary mb-0">Author</p>
+                            </div>
+                        <% } else { %>
+                            <img class="rounded-circle object-fit-cover" src="/images/user-avatar.png" width="48" height="48" alt="">
+                            <div>
+                                <p class="fw-semibold mb-0">Blogify member</p>
+                                <p class="small text-body-secondary mb-0">Author</p>
+                            </div>
+                        <% } %>
+                        <% if (blog.createdAt) { %>
+                            <time class="small text-body-secondary ms-auto" datetime="<%= new Date(blog.createdAt).toISOString() %>"><%= new Date(blog.createdAt).toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) %></time>
+                        <% } %>
+                    </div>
+                </header>
+
+                <% if (blog.coverImageURL) { %>
+                    <figure class="mb-4 mb-lg-5">
+                        <img class="img-fluid rounded-3 w-100" src="<%= blog.coverImageURL %>" alt="Cover image for <%= blog.title %>">
+                    </figure>
+                <% } %>
+
+                <div class="fs-5 lh-lg mb-5">
+                    <% blog.body.split(/\n{2,}/).forEach(paragraph => { %>
+                        <p><%= paragraph %></p>
+                    <% }) %>
+                </div>
+                </article>
             </div>
-            <p>
-                <%= blog.body %>
-            </p> 
-        </div>
-        <div class="container mt-3">
-            <h4>Comments</h4>
-            <% if (locals.user) { %>
-                <form action="/blog/comment/<%= blog._id %>" method="post">
-                    <label>Comment</label>
-                    <input type="text" name="comment" class="form-control"/>
-                    <button class="btn btn-primary btn-sm mt-2" type="submit">Post</button>
-                </form>
-            <% } %>
-            <% comments.forEach(comment => { %>
-                <img src="<%= profileImageUrl(comment.createdBy.profileImageUrl) %>" width="80px"/>
-                <p><%= comment.createdBy.fullName %></p>
-                <p><%= comment.comment %></p>
-            <% }) %>
-        </div>
+
+            <section class="row justify-content-center border-top pt-4 pt-lg-5" aria-labelledby="comments-title">
+                <div class="col-lg-10 col-xl-9">
+                <div class="d-flex justify-content-between align-items-baseline gap-3 mb-4">
+                    <h2 id="comments-title" class="h3 mb-0">Conversation</h2>
+                    <span class="text-body-secondary small"><%= comments ? comments.length : 0 %> <%= comments && comments.length === 1 ? 'comment' : 'comments' %></span>
+                </div>
+
+                <% if (locals.user) { %>
+                    <form action="/blog/comment/<%= blog._id %>" method="post" class="mb-4">
+                        <div class="mb-3">
+                            <label for="comment" class="form-label fw-semibold">Add to the conversation</label>
+                            <textarea id="comment" name="comment" class="form-control" rows="3" placeholder="Share a thoughtful response..." required></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Post comment</button>
+                    </form>
+                <% } else { %>
+                    <div class="alert alert-light border" role="status">
+                        <a href="/user/signin">Sign in</a> to join the conversation.
+                    </div>
+                <% } %>
+
+                <% if (comments && comments.length) { %>
+                    <div>
+                        <% comments.forEach(comment => { %>
+                            <article class="d-flex gap-3 border-top py-3">
+                                <img class="rounded-circle object-fit-cover flex-shrink-0" src="<%= profileImageUrl(comment.createdBy && comment.createdBy.profileImageUrl) || '/images/user-avatar.png' %>" width="40" height="40" alt="">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex flex-wrap align-items-baseline gap-2 mb-1">
+                                        <h3 class="h6 fw-semibold mb-0"><%= comment.createdBy && comment.createdBy.fullName ? comment.createdBy.fullName : 'Blogify member' %></h3>
+                                        <% if (comment.createdAt) { %>
+                                            <time class="small text-body-secondary" datetime="<%= new Date(comment.createdAt).toISOString() %>"><%= new Date(comment.createdAt).toLocaleDateString('en', { year: 'numeric', month: 'short', day: 'numeric' }) %></time>
+                                        <% } %>
+                                    </div>
+                                    <p class="mb-0 text-break"><%= comment.comment %></p>
+                                </div>
+                            </article>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <p class="text-body-secondary border-top pt-3 mb-0">No comments yet. Be the first to share a response.</p>
+                <% } %>
+                </div>
+            </section>
+        </main>
+    <% } else { %>
+        <main class="container py-5">
+            <div class="alert alert-warning" role="alert">
+                <h1 class="h4 alert-heading">Story not found</h1>
+                <p class="mb-3">This story may have been removed or the link may be incorrect.</p>
+                <a class="btn btn-outline-dark" href="/">Back to home</a>
+            </div>
+        </main>
     <% } %>
     <%- include('./partials/scripts.ejs') %>
 </body>

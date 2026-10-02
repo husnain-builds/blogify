@@ -37,16 +37,15 @@ userRouter.get('/profile/:id', async(req, res)=>{
     const userId = req.params.id;
     const user = await User.findOne({
         _id: userId,
-    })
-    return res.render('welcome', {
+    }).select('-password -salt');
+    if (!user) {
+        return res.status(404).render('profile', { user: null });
+    }
+    return res.render('profile', {
         user: user,
     })
 })
 
-// app.get("/welcome", async(req,res)=>{
-//     const user = await User.findOne({ email: req.query.email });
-//     console.log(user, "user")
-// })
 userRouter.get('/logout', (req, res)=>{
     res.clearCookie('token').redirect('/')
 })

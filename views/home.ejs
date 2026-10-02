@@ -2,23 +2,73 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs') %>
-    <title>Home</title>
+    <title>Blogify | Home</title>
 </head>
 <body>
     <%- include('./partials/nav.ejs') %>
-    
-    <!-- <%= JSON.stringify(blogs) %> -->
-    <div class="container mt-3">
-        <% blogs.forEach(blog => { %>
-            <div class="card" style="width: 18rem;">
-            <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title"><%= blog.title %></h5>
-                <a href="/blog/<%= blog._id %>" class="btn btn-primary">View</a>
+    <main class="container py-4 py-lg-5">
+        <section class="border-bottom pb-4 pb-lg-5 mb-4 mb-lg-5" aria-labelledby="home-title">
+            <div class="row align-items-end g-4">
+                <div class="col-lg-8">
+                    <p class="text-uppercase text-primary fw-semibold small mb-2">A little space for big ideas</p>
+                    <h1 id="home-title" class="display-4 fw-semibold mb-3">Good stories start right here.</h1>
+                    <p class="lead text-body-secondary mb-0">Read something thoughtful, find a fresh perspective, or share a story of your own.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a class="btn btn-primary btn-lg" href="/blog/add-new">Write a story <span aria-hidden="true">&rarr;</span></a>
+                </div>
             </div>
-        <% }) %>
-    </div>
-    </div>
+        </section>
+
+        <section aria-labelledby="stories-title">
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                <div>
+                    <p class="text-uppercase text-primary fw-semibold small mb-2">From the community</p>
+                    <h2 id="stories-title" class="h2 mb-0">Latest stories</h2>
+                </div>
+                <% if (blogs && blogs.length) { %>
+                    <span class="badge rounded-pill text-bg-light border"><%= blogs.length %> <%= blogs.length === 1 ? 'story' : 'stories' %></span>
+                <% } %>
+            </div>
+
+            <% if (blogs && blogs.length > 0) { %>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                    <% blogs.forEach(blog => { %>
+                        <div class="col">
+                            <article class="card h-100 shadow-sm">
+                                <a class="ratio ratio-16x9 bg-body-tertiary overflow-hidden rounded-top text-decoration-none" href="/blog/<%= blog._id %>" aria-label="Read <%= blog.title %>">
+                                    <% if (blog.coverImageURL) { %>
+                                        <img class="w-100 h-100 object-fit-cover" src="<%= blog.coverImageURL %>" alt="Cover for <%= blog.title %>" loading="lazy">
+                                    <% } else { %>
+                                        <span class="d-flex w-100 h-100 align-items-center justify-content-center text-body-secondary small">No cover image</span>
+                                    <% } %>
+                                </a>
+                                <div class="card-body d-flex flex-column">
+                                    <% if (blog.createdAt) { %>
+                                        <p class="small text-body-secondary mb-2"><time datetime="<%= new Date(blog.createdAt).toISOString() %>"><%= new Date(blog.createdAt).toLocaleDateString('en', { year: 'numeric', month: 'short', day: 'numeric' }) %></time></p>
+                                    <% } %>
+                                    <h3 class="h5 card-title"><a class="link-body-emphasis text-decoration-none" href="/blog/<%= blog._id %>"><%= blog.title %></a></h3>
+                                    <p class="card-text text-body-secondary"><%= blog.body.length > 150 ? `${blog.body.slice(0, 150).trim()}...` : blog.body %></p>
+                                    <a class="btn btn-outline-primary btn-sm align-self-start mt-auto" href="/blog/<%= blog._id %>">Read story <span aria-hidden="true">&rarr;</span></a>
+                                </div>
+                            </article>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-light border d-flex align-items-start gap-3 p-4 p-lg-5 mb-0" role="status">
+                    <span class="badge text-bg-primary fs-6">01</span>
+                    <div>
+                        <p class="text-uppercase text-primary fw-semibold small mb-2">A fresh page</p>
+                        <h3 class="h4">Your first story belongs here.</h3>
+                        <p class="text-body-secondary">There are no blog posts yet. Start the conversation by sharing an idea, a lesson, or something you simply love.</p>
+                        <a class="btn btn-primary" href="/blog/add-new">Create the first post <span aria-hidden="true">&rarr;</span></a>
+                    </div>
+                </div>
+            <% } %>
+        </section>
+        <footer class="border-top mt-5 pt-3 text-body-secondary small">Blogify <span class="ms-2">Made for the stories worth sharing.</span></footer>
+    </main>
     <%- include('./partials/scripts.ejs') %>
 </body>
 </html>

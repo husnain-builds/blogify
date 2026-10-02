@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head.ejs') %>
+    <title><%= user ? `${user.fullName} | Blogify Profile` : 'Profile not found | Blogify' %></title>
+</head>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <main class="container py-4 py-lg-5">
+        <% if (user) { %>
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb small">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                </ol>
+            </nav>
+
+            <section class="row justify-content-center" aria-labelledby="profile-title">
+                <div class="col-lg-10 col-xl-9">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="bg-primary bg-gradient p-4 p-md-5 text-white">
+                            <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-4">
+                                <img class="rounded-circle border border-3 border-white object-fit-cover flex-shrink-0" src="<%= user.profileImageUrl && user.profileImageUrl.startsWith('../public/') ? user.profileImageUrl.replace('../public', '') : user.profileImageUrl || '/images/user-avatar.png' %>" width="112" height="112" alt="Profile image for <%= user.fullName %>">
+                                <div>
+                                    <p class="text-uppercase small fw-semibold mb-2">Blogify member</p>
+                                    <h1 id="profile-title" class="display-6 fw-bold mb-2"><%= user.fullName %></h1>
+                                    <span class="badge rounded-pill text-bg-light text-primary"><%= user.role || 'USER' %></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4 p-md-5">
+                            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+                                <div>
+                                    <p class="text-uppercase text-primary fw-semibold small mb-2">Your account</p>
+                                    <h2 class="h4 mb-0">Profile details</h2>
+                                </div>
+                                <a class="btn btn-outline-primary" href="/blog/add-new">Write a blog</a>
+                            </div>
+
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4 text-body-secondary fw-medium py-3 border-top">Full name</dt>
+                                <dd class="col-sm-8 fw-semibold py-3 border-top mb-0"><%= user.fullName %></dd>
+
+                                <dt class="col-sm-4 text-body-secondary fw-medium py-3 border-top">Email address</dt>
+                                <dd class="col-sm-8 py-3 border-top mb-0"><a class="link-body-emphasis text-break" href="mailto:<%= user.email %>"><%= user.email %></a></dd>
+
+                                <dt class="col-sm-4 text-body-secondary fw-medium py-3 border-top">Account type</dt>
+                                <dd class="col-sm-8 py-3 border-top mb-0"><%= user.role || 'USER' %></dd>
+
+                                <% if (user.createdAt) { %>
+                                    <dt class="col-sm-4 text-body-secondary fw-medium py-3 border-top">Member since</dt>
+                                    <dd class="col-sm-8 py-3 border-top mb-0"><time datetime="<%= new Date(user.createdAt).toISOString() %>"><%= new Date(user.createdAt).toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' }) %></time></dd>
+                                <% } %>
+                            </dl>
+                        </div>
+                    </div>
+                    <p class="text-body-secondary small text-center mt-4 mb-0">Thanks for being part of the Blogify community.</p>
+                </div>
+            </section>
+        <% } else { %>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="alert alert-warning" role="alert">
+                        <h1 class="h4 alert-heading">Profile not found</h1>
+                        <p class="mb-3">This profile may have been removed or the link may be incorrect.</p>
+                        <a class="btn btn-outline-dark" href="/">Back to home</a>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </main>
+    <%- include('./partials/scripts.ejs') %>
+</body>
+</html>
