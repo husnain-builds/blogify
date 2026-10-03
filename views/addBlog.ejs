@@ -2,54 +2,74 @@
 <html lang="en">
   <head>
     <%- include('./partials/head.ejs') %>
-    <title>Add Blog</title>
+    <title>Write a story | Blogify</title>
   </head>
   <body>
     <%- include('./partials/nav.ejs') %>
+    <main class="container py-4 py-lg-5">
+      <div class="row justify-content-center">
+        <div class="col-xl-10">
+          <nav aria-label="Breadcrumb">
+            <ol class="breadcrumb small">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Write a story</li>
+            </ol>
+          </nav>
 
-    <div class="container mt-3">
-      <form action="/blog" method="post" enctype="multipart/form-data"> 
-        <div class="mb-3">
-          <label for="title" class="form-label"
-            >Title</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="title"
-            name="title"
-            aria-describedby="emailHelp"
-          />
-          <div id="emailHelp" class="form-text">
-            We'll never share your email with anyone else.
+          <header class="mb-4 mb-lg-5">
+            <p class="text-uppercase text-primary fw-semibold small mb-2">Your voice, your page</p>
+            <h1 class="display-5 fw-bold mb-2">Write a story</h1>
+            <p class="lead text-body-secondary mb-0">Give your idea a title, add the details, and share it with the Blogify community.</p>
+          </header>
+
+          <div class="row g-4 g-lg-5 align-items-start">
+            <div class="col-lg-8">
+              <form action="/blog" method="post" enctype="multipart/form-data" class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-lg-5">
+                  <div class="mb-4">
+                    <label for="title" class="form-label fw-semibold">Story title</label>
+                    <input type="text" class="form-control form-control-lg" id="title" name="title" maxlength="120" placeholder="Give your story a clear title" aria-describedby="titleHelp" required>
+                    <div id="titleHelp" class="form-text">Keep it focused and memorable. Up to 120 characters.</div>
+                  </div>
+
+                  <div class="mb-4">
+                    <label for="body" class="form-label fw-semibold">Your story</label>
+                    <textarea class="form-control" id="body" name="body" rows="14" maxlength="50000" placeholder="Start writing here..." aria-describedby="bodyHelp" required></textarea>
+                    <div id="bodyHelp" class="form-text">Share the context, details, and ideas you want readers to take away. Up to 50,000 characters.</div>
+                  </div>
+
+                  <div class="mb-4">
+                    <label for="coverImage" class="form-label fw-semibold">Cover image <span class="text-body-secondary fw-normal">(optional)</span></label>
+                    <input type="file" class="form-control" id="coverImage" name="coverImage" accept="image/jpeg,image/png,image/webp,image/gif" aria-describedby="coverImageHelp">
+                    <div id="coverImageHelp" class="form-text">JPEG, PNG, WebP, or GIF. Maximum file size: 5 MB.</div>
+                  </div>
+
+                  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 border-top pt-4">
+                    <a class="btn btn-outline-secondary order-2 order-sm-1" href="/">Cancel</a>
+                    <button class="btn btn-primary btn-lg order-1 order-sm-2" type="submit">Publish story <span aria-hidden="true">&rarr;</span></button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <aside class="col-lg-4" aria-labelledby="publishing-title">
+              <div class="card bg-body-tertiary border-0 rounded-4">
+                <div class="card-body p-4">
+                  <p class="text-uppercase text-primary fw-semibold small mb-2">Before you publish</p>
+                  <h2 id="publishing-title" class="h5 mb-3">A few useful reminders</h2>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent px-0">Choose a title that tells readers what to expect.</li>
+                    <li class="list-group-item bg-transparent px-0">Break long writing into paragraphs for easier reading.</li>
+                    <li class="list-group-item bg-transparent px-0">Use a cover image you have permission to share.</li>
+                  </ul>
+                  <div class="alert alert-light border small mt-3 mb-0" role="note">Your story will be published as soon as you submit it.</div>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
-        <div class="mb-3">
-          <label for="coverImage" class="form-label"
-            >Cover Image</label
-          >
-          <input
-            type="file"
-            class="form-control"
-            id="coverImage"
-            name="coverImage"
-            aria-describedby="coverImage"
-          />
-          <div id="emailHelp" class="form-text">
-            We'll never share your email with anyone else.
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="body" class="form-label"
-            >Body</label
-          >
-          <textarea class="form-control" aria-label="With textarea" id="body" name="body"></textarea>
-        </div>
-        <div class="mb-3">
-          <button class="btn btn-primary">Submit</button>
-        </div>
-      </form>
-    </div>
+      </div>
+    </main>
     <%- include('./partials/scripts.ejs') %>
   </body>
 </html>

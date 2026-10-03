@@ -16,7 +16,7 @@ userRouter.post('/signup', async (req, res)=>{
     const user = await User.create({
         fullName, email, password
     })
-    return res.redirect(`/welcome?email=${encodeURIComponent(user.email)}`);
+    return res.redirect('/user/signin');
 })
 
 userRouter.post('/signin', async (req, res)=>{
